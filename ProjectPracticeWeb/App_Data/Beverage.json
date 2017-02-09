@@ -1,0 +1,22 @@
+﻿ [
+	{
+		"Name": "Tea",
+		"Cost": 13,
+		"Count": 10
+	},
+	{
+		"Name": "Coffee",
+		"Cost": 18,
+		"Count": 20
+	},
+	{
+		"Name": "Coffee with milk",
+		"Cost": 21,
+		"Count": 20
+	},
+	{
+    "Name": "Juice",
+	"Cost": 35,
+	"Count": 15     
+  }
+]
