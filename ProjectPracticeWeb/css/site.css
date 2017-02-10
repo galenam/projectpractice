@@ -1,0 +1,19 @@
+﻿body {
+}
+.vendingMachine div.left
+{
+float:left;
+	padding-left: 50px;
+}
+.vendingMachine div.clear{
+clear: left;
+padding-left: 50px;
+}.vendingMachine div div {
+	 padding-bottom: 10px;
+ }
+#UserPurse div span.nominalEntry {
+	background-color: lightblue;	
+}
+#InsertedCoins {
+	padding-top: 20px;
+}

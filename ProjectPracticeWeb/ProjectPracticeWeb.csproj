@@ -148,12 +148,14 @@
     <None Include="App_Data\UserPurse.json" />
     <None Include="App_Data\VMPurse.json" />
     <Content Include="Global.asax" />
+    <Content Include="css\site.css" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.1.1.js" />
     <Content Include="Scripts\jquery-3.1.1.min.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
-    <Content Include="Views\index.html" />
+    <Content Include="js\vmscipts.js" />
+    <Content Include="index.html" />
     <Content Include="Web.config" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.1.1.min.map" />
@@ -162,6 +164,7 @@
     <Compile Include="AppCode\CommonMethods.cs" />
     <Compile Include="AppCode\InsertedUserCoinsState.cs" />
     <Compile Include="AppCode\IState.cs" />
+    <Compile Include="AppCode\IVendingMachine.cs" />
     <Compile Include="AppCode\NoBeverageState.cs" />
     <Compile Include="AppCode\NoUserCoinsState.cs" />
     <Compile Include="AppCode\SoldBeverageState.cs" />
