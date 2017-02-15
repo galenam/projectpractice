@@ -5,16 +5,15 @@ namespace ProjectPracticeWeb.AppCode
 {
 	public interface IVendingMachine
 	{
-		IList<Beverage> Beverages { get; set; }
-		IDictionary<int, int> MachineCoins { get; set; }
-		IDictionary<int, int> UserCoins { get; set; }
 		int InsertedSum { get; set; }
 		IState State { get; set; }
 
 		bool InsertCoin(int nominal);
 		bool ReturnCoins();
-		bool TurnCrank();
+		bool TurnCrank(Beverage bev);
+		bool ReleaseBeverage(Beverage bev);
 
-		bool SellBeverage(Beverage bev);
+		bool IsEnoughMoneyToSellBeverage(Beverage bev);
+		bool HasMoneyInserted();
 	}
 }

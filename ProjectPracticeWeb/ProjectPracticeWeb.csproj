@@ -177,6 +177,7 @@
     </Compile>
     <Compile Include="Models\Beverage.cs" />
     <Compile Include="Models\Coin.cs" />
+    <Compile Include="Models\OperationResult.cs" />
     <Compile Include="Models\VendingMachine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

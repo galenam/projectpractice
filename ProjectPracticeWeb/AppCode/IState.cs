@@ -7,6 +7,6 @@ namespace ProjectPracticeWeb.AppCode
 	    bool InsertCoin(int nominal, IVendingMachine vm);
 	    bool ReturnCoins(IVendingMachine vm);
 	    bool TurnCrank(IVendingMachine vm, Beverage bev);
-	    bool Dispense(IVendingMachine vm);
+	    bool Dispense(IVendingMachine vm, Beverage bev);
     }
 }

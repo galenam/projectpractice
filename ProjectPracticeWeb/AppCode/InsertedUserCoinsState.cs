@@ -4,7 +4,7 @@ namespace ProjectPracticeWeb.AppCode
 {
 	public class InsertedUserCoinsState : IState
 	{
-		public bool Dispense(IVendingMachine vm)
+		public bool Dispense(IVendingMachine vm, Beverage bev)
 		{
 			return false;
 		}
@@ -22,8 +22,7 @@ namespace ProjectPracticeWeb.AppCode
 
 		public bool TurnCrank(IVendingMachine vm, Beverage bev)
 		{
-		// todo : is it correct ???
-			if (!vm.SellBeverage(bev)) return false;
+			if (!vm.IsEnoughMoneyToSellBeverage(bev)) return false;
 			
 			vm.State = new SoldBeverageState();
 			return true;

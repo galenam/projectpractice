@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ProjectPracticeWeb.AppCode;
 
 namespace ProjectPracticeWeb.Models
 {
     public class VendingMachine:IVendingMachine
     {
-        public IList<Beverage> Beverages { get; set; }
-        public IDictionary<int, int> MachineCoins { get; set; }
-        public IDictionary<int, int> UserCoins { get; set; }
+        public Dictionary<string, Beverage> Beverages { get; set; }
+        public SortedDictionary<int, int> MachineCoins { get; set; }
+        public SortedDictionary<int, int> UserCoins { get; set; }
         public int InsertedSum { get; set; }
 		public IState State { get; set; }
 
-	    public VendingMachine(IList<Beverage> _bev, IDictionary<int, int> _userP, IDictionary<int, int> _machineP)
+	    public VendingMachine(Dictionary<string, Beverage> _bev, SortedDictionary<int, int> _userP, SortedDictionary<int, int> _machineP)
 	    {
 		    Beverages = _bev;
 		    UserCoins = _userP;
@@ -24,24 +25,61 @@ namespace ProjectPracticeWeb.Models
 		    if (!UserCoins.ContainsKey(nominal) || UserCoins[nominal] == 0) return false;
 		    
 			UserCoins[nominal]--;
+		    MachineCoins[nominal]++;
 			InsertedSum += nominal;
+		    State.InsertCoin(nominal, this);
 		    return true;
 	    }
 
 	    public bool ReturnCoins()
 	    {
-		    return false;
+		    var sumToReturn = InsertedSum;
+
+		    foreach (var nominal in MachineCoins.Keys.Reverse())
+		    {
+			    var countHasWithNominal = MachineCoins[nominal];
+			    var countNeededWithNominal = sumToReturn / nominal;
+			    var countToReturn = countNeededWithNominal >= countHasWithNominal ? countHasWithNominal : countNeededWithNominal;
+			    UserCoins[nominal] +=  countToReturn;
+			    MachineCoins[nominal] -= countToReturn;
+			    sumToReturn -= countToReturn * nominal;
+			    if (sumToReturn <= 0) break;
+		    }
+		    if (sumToReturn > 0) return false;
+
+		    InsertedSum = 0;
+		    State.ReturnCoins(this);
+		    return true;
 	    }
 
-	    public bool TurnCrank()
+		public bool TurnCrank(Beverage bev)
 	    {
+		    State.TurnCrank(this, bev);
+		    State.Dispense(this, bev);
 			return false;
 		}
 
 
-	    public bool SellBeverage(Beverage bev)
+	    public bool IsEnoughMoneyToSellBeverage(Beverage bev)
 	    {
-		    return false;
+		    return InsertedSum >= bev.Cost;
+	    }
+
+	    public bool ReleaseBeverage(Beverage bev)
+	    {
+			if (!IsEnoughMoneyToSellBeverage(bev)) return false;
+		    if (Beverages[bev.Name] == null) return false;
+		    Beverages[bev.Name].Count--;
+			InsertedSum -= bev.Cost;
+		    if (!Beverages.Any(b => b.Value.Count > 0)) State = new NoBeverageState();
+		    if (InsertedSum == 0) State = new InsertedUserCoinsState();
+		    State = new NoUserCoinsState();
+		    return true;
+	    }
+
+	    public bool HasMoneyInserted()
+	    {
+		    return InsertedSum>0;
 	    }
     }
 }

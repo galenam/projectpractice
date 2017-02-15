@@ -1,4 +1,6 @@
-﻿namespace ProjectPracticeWeb.AppCode
+﻿using ProjectPracticeWeb.Models;
+
+namespace ProjectPracticeWeb.AppCode
 {
     public class NoUserCoinsState:IState
     {
@@ -12,12 +14,12 @@
 		    return false;
 	    }
 
-	    public bool TurnCrank(IVendingMachine vm)
+	    public bool TurnCrank(IVendingMachine vm, Beverage bev)
 	    {
 			return false;
 		}
 
-		public bool Dispense(IVendingMachine vm)
+		public bool Dispense(IVendingMachine vm, Beverage bev)
 	    {
 			return false;
 		}
