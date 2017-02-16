@@ -1,7 +1,7 @@
 ﻿var apiAddresses = "/api/home/";
 
 $(function () {
-	$.getJSON(apiAddresses+"GetInitialScreen").done(function(data) {
+	$.getJSON(apiAddresses+"get").done(function(data) {
 		console.log(data);
 		var vm = new VendingMachine(data);
 		vm.Render();
@@ -33,7 +33,17 @@ function VendingMachine(vm) {
 			if (isNaN(count) || count === 0) return false;
 			var nominal = parseInt($(this).find("span.nominal").text());
 			// add nominal into url
-			$.getJSON(apiAddresses + "InsertCoins/").done(function (data) {
+			$.ajax({
+				url: apiAddresses ,
+				data: 'nominal='+nominal,
+				dataType: 'json',
+				method: 'PUT'
+			})/*
+
+
+
+
+			$.getJSON(apiAddresses + nominal + "/insertcoins/")*/.done(function (data) {
 				console.log(data);
 				if (!data.Success) {
 					return false;

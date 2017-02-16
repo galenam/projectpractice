@@ -18,16 +18,18 @@ namespace ProjectPracticeWeb.Controllers
 				CommonMethods.DeserializeJson<SortedDictionary<int, int>>("UserPurseJson"),
 				CommonMethods.DeserializeJson<SortedDictionary<int, int>>("VMPurseJson"));
 	    }
-
-	    public IHttpActionResult GetInitialScreen()
+		
+		public IHttpActionResult Get()
 	    {
 			return Ok(VMachine);
 	    }
-
-	    public IHttpActionResult InsertCoins(/*[FromUri]int nominal*/)
+		
+		//[HttpGet]
+		[HttpPut]
+		public IHttpActionResult Put([FromBody]int nominal)
 	    {
 		// uncomment FromUrl
-		    var nominal = 0;
+		    //var nominal = 0;
 		    var res = VMachine.InsertCoin(nominal);
 		    return Ok(new
 			{
@@ -49,7 +51,7 @@ namespace ProjectPracticeWeb.Controllers
 			});
 		}
 
-	    public IHttpActionResult SellBeverage(Beverage bev)
+	    public IHttpActionResult Post(Beverage bev)
 	    {
 			var res = VMachine.TurnCrank(bev);
 			return Ok(new
