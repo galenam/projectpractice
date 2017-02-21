@@ -32,10 +32,12 @@ function VendingMachine(vm) {
 			var count = parseInt(countSpan.text());
 			if (isNaN(count) || count === 0) return false;
 			var nominal = parseInt($(this).find("span.nominal").text());
+			
 			// add nominal into url
 			$.ajax({
-				url: apiAddresses ,
-				data: 'nominal='+nominal,
+				url: apiAddresses+"?id=1" ,
+				//data: jQuery.param({ nominal: nominal }),
+				//contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 				dataType: 'json',
 				method: 'PUT'
 			})/*

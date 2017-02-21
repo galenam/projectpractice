@@ -8,9 +8,9 @@ namespace ProjectPracticeWeb.Controllers
 {
     public class HomeController : ApiController
     {
-		public VendingMachine VMachine { get; }
+		public static VendingMachine VMachine { get; }
 
-	    public HomeController()
+	    static HomeController()
 	    {
 		    var tmp = CommonMethods.DeserializeJson<List<Beverage>>("BeverageJson");
 			var beverages = tmp.Any() ? tmp.ToDictionary(val => val.Name, val=> val) : null;
@@ -26,7 +26,7 @@ namespace ProjectPracticeWeb.Controllers
 		
 		//[HttpGet]
 		[HttpPut]
-		public IHttpActionResult Put([FromBody]int nominal)
+		public IHttpActionResult Put(int nominal)
 	    {
 		// uncomment FromUrl
 		    //var nominal = 0;
