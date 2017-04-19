@@ -27,7 +27,7 @@ namespace ProjectPracticeWeb.Models
 			UserCoins[nominal]--;
 		    MachineCoins[nominal]++;
 			InsertedSum += nominal;
-		    State.InsertCoin(nominal, this);
+		    //State.InsertCoin(nominal, this);
 		    return true;
 	    }
 

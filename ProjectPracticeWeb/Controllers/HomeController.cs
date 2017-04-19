@@ -24,8 +24,6 @@ namespace ProjectPracticeWeb.Controllers
 			return Ok(VMachine);
 	    }
 		
-		//[HttpGet]
-		[HttpPut]
 		public IHttpActionResult Put(int nominal)
 	    {
 		// uncomment FromUrl

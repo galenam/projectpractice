@@ -2,7 +2,6 @@
 
 $(function () {
 	$.getJSON(apiAddresses+"get").done(function(data) {
-		console.log(data);
 		var vm = new VendingMachine(data);
 		vm.Render();
 	});
@@ -22,31 +21,27 @@ function VendingMachine(vm) {
 
 	var that = this;
 	this.Render = function() {
-		this.UpdateBeverages(this.Beverages);
-		this.UpdateMachineCoins(this.MachineCoins);
-		this.UpdateUsercoins(this.UserCoins);
+		this.CreateBeverages(this.Beverages);
+		this.CreateMachineCoins(this.MachineCoins);
+		this.CreateUsercoins(this.UserCoins);
 		this.InsertedCoinsSpan.text(that.InsertedSum);
-
+// убрать голубую надпись для клика , есди монет носминала 0.
 		this.UserPurseDiv.find("div span.nominalEntry").on("click", function () {
 			var countSpan = $(this).parent().find(".count");
 			var count = parseInt(countSpan.text());
-			if (isNaN(count) || count === 0) return false;
-			var nominal = parseInt($(this).find("span.nominal").text());
-			
+			var nominalElement = $(this).find("span.nominal");
+			if (isNaN(count) || count === 0)
+			{
+				$(nominalElement).removeClass("nominal");
+				return false;
+			}
+			var nominal = parseInt($(nominalElement).text());			
 			// add nominal into url
 			$.ajax({
-				url: apiAddresses+"?id=1" ,
-				//data: jQuery.param({ nominal: nominal }),
-				//contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+				url: apiAddresses + "/Put?nominal=" + nominal,
 				dataType: 'json',
 				method: 'PUT'
-			})/*
-
-
-
-
-			$.getJSON(apiAddresses + nominal + "/insertcoins/")*/.done(function (data) {
-				console.log(data);
+			}).done(function (data) {
 				if (!data.Success) {
 					return false;
 				}
@@ -55,43 +50,61 @@ function VendingMachine(vm) {
 				that.InsertedCoinsSpan.text(data.InsertedSum);
 				return true;
 			});
-
-			//that.InsertedCoinsSpan.text(parseInt(that.InsertedCoinsSpan.text()) + nominal);
-			//countSpan.text(count - 1);
 			return true;
 		});
-
 	}
 
+	this.Update = function (array, div)
+	{
+		var that = this;
+		$.each(array,
+			function (index)
+			{
+				div.find("div span.nominalEntry span.nominal").filter(function ()
+				{
+					return $(this).text() == index;
+				}).parent().parent().find("span.count").html(this);
+			});
+	};
 
+	this.UpdateMachineCoins = function (machineCoins) {
+		this.MachineCoins = machineCoins;
+		this.Update(this.MachineCoins, this.MachinePurseDiv);
+	};
 
-	this.UpdateBeverages = function(beverages) {
-		this.Beverages = beverages;
+	this.UpdateUsercoins = function (userCoins) {
+		this.UserCoins = userCoins;
+		this.Update(this.UserCoins, this.UserPurseDiv);
+	};
+
+	this.CreateBeverages = function () {
 		$.each(this.Beverages,
 			function () {
 				$("<div>" + this.Name + " = " + this.Cost + " руб, " + this.Count + " порций </div>").appendTo(that.BeveragesDiv);
 			});
 	};
 
-	this.UpdateMachineCoins = function(machineCoins) {
-		this.MachineCoins = machineCoins;
+	this.CreateMachineCoins = function () {
+		var textForAppend = "";
 		$.each(this.MachineCoins,
-			function(index) {
-				that.DisplayMoney(this, index, that.MachinePurseDiv);
+			function (index) {
+				textForAppend+= that.DisplayMoney(this, index);
 			});
+			$(textForAppend).appendTo(that.MachinePurseDiv);
 	};
 
-	this.UpdateUsercoins = function(userCoins) {
+	this.CreateUsercoins = function (userCoins) {
 		this.UserCoins = userCoins;
+		var textForAppend = "";
 		$.each(this.UserCoins,
-		function (index) {
-			that.DisplayMoney(this, index, that.UserPurseDiv);
-		});
+			function (index) {
+				textForAppend+=that.DisplayMoney(this, index);
+			});
+		$(textForAppend).appendTo(that.UserPurseDiv);
 	};
 
-
-	this.DisplayMoney=function(element, index, parentDiv) {
-		$("<div><span class='nominalEntry'><span class='nominal'>" + index + "</span> руб</span> = <span class='count'>" + element + "</span> штук</div>").appendTo(parentDiv);
+	this.DisplayMoney = function (element, index) {
+		return "<div><span class='nominalEntry'><span class='nominal'>" + index + "</span> руб</span> = <span class='count'>" + element + "</span> штук</div>";
 	};
 
 }
