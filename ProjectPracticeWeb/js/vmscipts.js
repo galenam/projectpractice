@@ -25,14 +25,12 @@ function VendingMachine(vm) {
 		this.CreateMachineCoins(this.MachineCoins);
 		this.CreateUsercoins(this.UserCoins);
 		this.InsertedCoinsSpan.text(that.InsertedSum);
-// убрать голубую надпись для клика , есди монет носминала 0.
 		this.UserPurseDiv.find("div span.nominalEntry").on("click", function () {
 			var countSpan = $(this).parent().find(".count");
 			var count = parseInt(countSpan.text());
 			var nominalElement = $(this).find("span.nominal");
 			if (isNaN(count) || count === 0)
 			{
-				$(nominalElement).removeClass("nominal");
 				return false;
 			}
 			var nominal = parseInt($(nominalElement).text());			
@@ -60,10 +58,17 @@ function VendingMachine(vm) {
 		$.each(array,
 			function (index)
 			{
-				div.find("div span.nominalEntry span.nominal").filter(function ()
-				{
+				var elem = div.find("div span span.nominal").filter(function ()
+				{					
 					return $(this).text() == index;
-				}).parent().parent().find("span.count").html(this);
+				}).parent().parent().find("span.count");
+				elem.html(this);
+				if (this <= 0)
+				{
+// попытка убрать выделение цветом с "пустых" отделов кошелька 
+					$(elem).parent().removeClass("nominalEntry");
+					$(elem).parent().off("click");
+				}
 			});
 	};
 
@@ -80,8 +85,13 @@ function VendingMachine(vm) {
 	this.CreateBeverages = function () {
 		$.each(this.Beverages,
 			function () {
-				$("<div>" + this.Name + " = " + this.Cost + " руб, " + this.Count + " порций </div>").appendTo(that.BeveragesDiv);
+				$("<div class='checkBeverage'><span class='name'>" + this.Name + "</span> = " + this.Cost + " руб, " + this.Count + " порций </div>").appendTo(that.BeveragesDiv);
 			});
+		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
+		{
+			var name = $(this).find("span.name").text();
+			
+		});
 	};
 
 	this.CreateMachineCoins = function () {
