@@ -27,7 +27,7 @@ namespace ProjectPracticeWeb.Models
 			UserCoins[nominal]--;
 		    MachineCoins[nominal]++;
 			InsertedSum += nominal;
-		    //State.InsertCoin(nominal, this);
+		    State.InsertCoin(nominal, this);
 		    return true;
 	    }
 
@@ -52,8 +52,10 @@ namespace ProjectPracticeWeb.Models
 		    return true;
 	    }
 
-		public bool TurnCrank(Beverage bev)
+		public bool TurnCrank(string bevName)
 	    {
+			var bev = Beverages.ContainsKey(bevName) ? Beverages[bevName] : null;
+			if (bev == null) { return false; }
 		    State.TurnCrank(this, bev);
 		    State.Dispense(this, bev);
 			return false;

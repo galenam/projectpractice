@@ -21,3 +21,9 @@ padding-left: 50px;
 	background-color: greenyellow;
 	
 }
+#Beverages div.clickBeverage {
+	background-color: red;	
+}
+.vendingMachine .error {
+	color: red;
+}

@@ -6,10 +6,12 @@ namespace ProjectPracticeWeb.AppCode
     {
 	    public bool InsertCoin(int nominal, IVendingMachine vm)
 	    {
-		    return vm.InsertCoin(nominal);
-	    }
+			//return vm.InsertCoin(nominal);
+			vm.State = new InsertedUserCoinsState();
+			return true;
+		}
 
-	    public bool ReturnCoins(IVendingMachine vm)
+		public bool ReturnCoins(IVendingMachine vm)
 	    {
 		    return false;
 	    }

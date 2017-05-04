@@ -10,7 +10,7 @@ namespace ProjectPracticeWeb.AppCode
 
 		bool InsertCoin(int nominal);
 		bool ReturnCoins();
-		bool TurnCrank(Beverage bev);
+		bool TurnCrank(string bev);
 		bool ReleaseBeverage(Beverage bev);
 
 		bool IsEnoughMoneyToSellBeverage(Beverage bev);

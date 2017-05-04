@@ -49,7 +49,7 @@ namespace ProjectPracticeWeb.Controllers
 			});
 		}
 
-	    public IHttpActionResult Post(Beverage bev)
+	    public IHttpActionResult Post(string bev)
 	    {
 			var res = VMachine.TurnCrank(bev);
 			return Ok(new

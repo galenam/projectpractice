@@ -18,6 +18,7 @@ function VendingMachine(vm) {
 	this.UserPurseDiv = $("#UserPurse");
 	this.MachinePurseDiv = $("#MachinePurse");
 	this.InsertedCoinsSpan = $("#InsertedCoins span");
+	this.ErrorDiv = $(".vendingMachine .error");
 
 	var that = this;
 	this.Render = function() {
@@ -45,7 +46,13 @@ function VendingMachine(vm) {
 				}
 				that.UpdateMachineCoins(data.MachineCoins);
 				that.UpdateUsercoins(data.UserCoins);
+
+				console.log(data.InsertedSum);
+				console.log(that.InsertedCoinsSpan.text());
+
 				that.InsertedCoinsSpan.text(data.InsertedSum);
+				console.log(that.InsertedCoinsSpan.text());
+
 				return true;
 			});
 			return true;
@@ -82,15 +89,52 @@ function VendingMachine(vm) {
 		this.Update(this.UserCoins, this.UserPurseDiv);
 	};
 
-	this.CreateBeverages = function () {
+	this.CreateBeverages = function ()
+	{
+		var classAttr = "class='checkBeverage'";
+		var that = this;
 		$.each(this.Beverages,
-			function () {
-				$("<div class='checkBeverage'><span class='name'>" + this.Name + "</span> = " + this.Cost + " руб, " + this.Count + " порций </div>").appendTo(that.BeveragesDiv);
+			function ()
+			{				
+				$("<div "+ (this.Count >0 ? classAttr : "") +"><span class='name'>" + this.Name + "</span> = <span class='cost'>" + this.Cost + "</span> руб, <span class='count'>" + this.Count + "</span> порций </div>").appendTo(that.BeveragesDiv);
 			});
+
 		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
 		{
 			var name = $(this).find("span.name").text();
+			if (name == null || name == "") { return false;}
+
+			var cost = $(this).find("span.cost").text();
+
+			if (isNaN(cost) || that.InsertedSum < cost) { return false; }
 			
+			//console.log()
+			var count = parseInt($(this).find("span.count").text());
+
+			if (isNaN(count) || count <= 0) { return false; }
+
+			$(this).removeClass().addClass("clickBeverage");
+			$.ajax({
+				url: apiAddresses + "/Post?bev=" + name,
+				dataType: 'json',
+				method: 'POST'
+			}).done(function (data)
+			{
+				console.log(data);
+				
+				if (!data.Success)
+				{
+					return false;
+				}
+				that.UpdateMachineCoins(data.MachineCoins);
+				that.UpdateUsercoins(data.UserCoins);
+				that.InsertedCoinsSpan.text(data.InsertedSum);
+				return true;
+			}).always(function()
+			{
+				$(this).removeClass().addClass("checkBeverage");
+			});
+			return false;
 		});
 	};
 

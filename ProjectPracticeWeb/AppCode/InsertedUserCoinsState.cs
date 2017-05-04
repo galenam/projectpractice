@@ -11,7 +11,8 @@ namespace ProjectPracticeWeb.AppCode
 
 		public bool InsertCoin(int nominal, IVendingMachine vm)
 		{
-			return vm.InsertCoin(nominal);
+			return true;
+			//return vm.InsertCoin(nominal);
 		}
 
 		public bool ReturnCoins(IVendingMachine vm)
