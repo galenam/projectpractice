@@ -27,3 +27,6 @@ padding-left: 50px;
 .vendingMachine .error {
 	color: red;
 }
+#InsertedCoins button {
+	margin-left:15px;
+}

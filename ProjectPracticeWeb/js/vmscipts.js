@@ -26,6 +26,7 @@ function VendingMachine(vm) {
 		this.CreateMachineCoins(this.MachineCoins);
 		this.CreateUsercoins(this.UserCoins);
 		this.InsertedCoinsSpan.text(that.InsertedSum);
+
 		this.UserPurseDiv.find("div span.nominalEntry").on("click", function () {
 			var countSpan = $(this).parent().find(".count");
 			var count = parseInt(countSpan.text());
@@ -46,18 +47,85 @@ function VendingMachine(vm) {
 				}
 				that.UpdateMachineCoins(data.MachineCoins);
 				that.UpdateUsercoins(data.UserCoins);
-
-				console.log(data.InsertedSum);
-				console.log(that.InsertedCoinsSpan.text());
-
-				that.InsertedCoinsSpan.text(data.InsertedSum);
-				console.log(that.InsertedCoinsSpan.text());
-
+				that.UpdateInsertedSum(data.InsertedSum, that);
 				return true;
 			});
 			return true;
 		});
+
+		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
+		{
+			var name = $(this).find("span.name").text();
+			if (name == null || name == "") { return false; }
+
+			var cost = $(this).find("span.cost").text();
+
+			if (isNaN(cost) || that.InsertedSum < cost) { return false; }
+
+			var count = parseInt($(this).find("span.count").text());
+
+			if (isNaN(count) || count <= 0) { return false; }
+
+			$(this).removeClass().addClass("clickBeverage");
+			$.ajax({
+				url: apiAddresses + "/Post?bev=" + name,
+				dataType: 'json',
+				method: 'POST'
+			}).done(function (data)
+			{
+				if (!data.Success)
+				{
+					return false;
+				}
+				that.UpdateMachineCoins(data.MachineCoins);
+				that.UpdateUsercoins(data.UserCoins);
+				that.UpdateInsertedSum(data.InsertedSum);
+				that.UpdateBevereges(data.Beverages);
+				return true;
+			}).always(function ()
+			{
+				$(this).removeClass().addClass("checkBeverage");
+			});
+			return false;
+		});
+
+		$("#InsertedCoins button").on("click", function ()
+		{
+			$.ajax({
+				url: apiAddresses + "/delete",
+				dataType: 'json',
+				method: 'delete'
+			}).done(function (data)
+			{
+				console.log(data);
+				that.UpdateMachineCoins(data.MachineCoins);
+				that.UpdateUsercoins(data.UserCoins);
+				that.UpdateInsertedSum(data.InsertedSum);
+			});
+		});
 	}
+
+	this.UpdateInsertedSum = function (sum)
+	{
+		this.InsertedCoinsSpan.text(sum);
+		this.InsertedSum = sum;
+	};
+
+	this.UpdateBevereges = function (beverages)
+	{
+		this.Beverages = beverages;
+		var that = this;
+		$.each(this.Beverages, function (index)
+		{
+			var elemParent = that.BeveragesDiv.find("div span.name").filter(function ()
+			{
+				return $(this).text() == index;
+			}).parent();
+
+			elemParent.find("span.count").html(this.Count);
+			elemParent.removeClass().addClass("checkBeverage");
+		})
+	};
 
 	this.Update = function (array, div)
 	{
@@ -97,45 +165,7 @@ function VendingMachine(vm) {
 			function ()
 			{				
 				$("<div "+ (this.Count >0 ? classAttr : "") +"><span class='name'>" + this.Name + "</span> = <span class='cost'>" + this.Cost + "</span> руб, <span class='count'>" + this.Count + "</span> порций </div>").appendTo(that.BeveragesDiv);
-			});
-
-		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
-		{
-			var name = $(this).find("span.name").text();
-			if (name == null || name == "") { return false;}
-
-			var cost = $(this).find("span.cost").text();
-
-			if (isNaN(cost) || that.InsertedSum < cost) { return false; }
-			
-			//console.log()
-			var count = parseInt($(this).find("span.count").text());
-
-			if (isNaN(count) || count <= 0) { return false; }
-
-			$(this).removeClass().addClass("clickBeverage");
-			$.ajax({
-				url: apiAddresses + "/Post?bev=" + name,
-				dataType: 'json',
-				method: 'POST'
-			}).done(function (data)
-			{
-				console.log(data);
-				
-				if (!data.Success)
-				{
-					return false;
-				}
-				that.UpdateMachineCoins(data.MachineCoins);
-				that.UpdateUsercoins(data.UserCoins);
-				that.InsertedCoinsSpan.text(data.InsertedSum);
-				return true;
-			}).always(function()
-			{
-				$(this).removeClass().addClass("checkBeverage");
-			});
-			return false;
-		});
+			});		
 	};
 
 	this.CreateMachineCoins = function () {

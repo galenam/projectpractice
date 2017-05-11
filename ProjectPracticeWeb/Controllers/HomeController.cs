@@ -38,14 +38,15 @@ namespace ProjectPracticeWeb.Controllers
 			});
 	    }
 
-	    public IHttpActionResult ReturnCoins()
+	    public IHttpActionResult Delete()
 	    {
 			var res = VMachine.ReturnCoins();
 			return Ok(new
 			{
 				Success = res,
 				VMachine.UserCoins,
-				VMachine.MachineCoins
+				VMachine.MachineCoins,
+				VMachine.InsertedSum
 			});
 		}
 

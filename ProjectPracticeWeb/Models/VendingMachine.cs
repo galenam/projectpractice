@@ -58,7 +58,7 @@ namespace ProjectPracticeWeb.Models
 			if (bev == null) { return false; }
 		    State.TurnCrank(this, bev);
 		    State.Dispense(this, bev);
-			return false;
+			return true;
 		}
 
 
