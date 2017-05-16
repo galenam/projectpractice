@@ -25,34 +25,8 @@ function VendingMachine(vm) {
 		this.CreateBeverages(this.Beverages);
 		this.CreateMachineCoins(this.MachineCoins);
 		this.CreateUsercoins(this.UserCoins);
-		this.InsertedCoinsSpan.text(that.InsertedSum);
-
-		this.UserPurseDiv.find("div span.nominalEntry").on("click", function () {
-			var countSpan = $(this).parent().find(".count");
-			var count = parseInt(countSpan.text());
-			var nominalElement = $(this).find("span.nominal");
-			if (isNaN(count) || count === 0)
-			{
-				return false;
-			}
-			var nominal = parseInt($(nominalElement).text());			
-			// add nominal into url
-			$.ajax({
-				url: apiAddresses + "/Put?nominal=" + nominal,
-				dataType: 'json',
-				method: 'PUT'
-			}).done(function (data) {
-				if (!data.Success) {
-					return false;
-				}
-				that.UpdateMachineCoins(data.MachineCoins);
-				that.UpdateUsercoins(data.UserCoins);
-				that.UpdateInsertedSum(data.InsertedSum, that);
-				return true;
-			});
-			return true;
-		});
-
+		this.InsertedCoinsSpan.text(this.InsertedSum);
+		
 		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
 		{
 			var name = $(this).find("span.name").text();
@@ -65,7 +39,6 @@ function VendingMachine(vm) {
 			var count = parseInt($(this).find("span.count").text());
 
 			if (isNaN(count) || count <= 0) { return false; }
-
 			$(this).removeClass().addClass("clickBeverage");
 			$.ajax({
 				url: apiAddresses + "/Post?bev=" + name,
@@ -89,6 +62,8 @@ function VendingMachine(vm) {
 			return false;
 		});
 
+		this.AddOnClickUserPurse();
+
 		$("#InsertedCoins button").on("click", function ()
 		{
 			$.ajax({
@@ -97,11 +72,45 @@ function VendingMachine(vm) {
 				method: 'delete'
 			}).done(function (data)
 			{
-				console.log(data);
 				that.UpdateMachineCoins(data.MachineCoins);
 				that.UpdateUsercoins(data.UserCoins);
 				that.UpdateInsertedSum(data.InsertedSum);
 			});
+		});
+	}
+
+	this.AddOnClickUserPurse = function ()
+	{
+		var that = this;
+
+		// клик вынести в отдельную процедуру
+		this.UserPurseDiv.find("div span.nominalEntry").on("click", function ()
+		{
+			var countSpan = $(this).parent().find(".count");
+			var count = parseInt(countSpan.text());
+			var nominalElement = $(this).find("span.nominal");
+			if (isNaN(count) || count === 0)
+			{
+				return false;
+			}
+			var nominal = parseInt($(nominalElement).text());
+			// add nominal into url
+			$.ajax({
+				url: apiAddresses + "/Put?nominal=" + nominal,
+				dataType: 'json',
+				method: 'PUT'
+			}).done(function (data)
+			{
+				if (!data.Success)
+				{
+					return false;
+				}
+				that.UpdateMachineCoins(data.MachineCoins);
+				that.UpdateUsercoins(data.UserCoins);
+				that.UpdateInsertedSum(data.InsertedSum, that);
+				return true;
+			});
+			return true;
 		});
 	}
 
@@ -127,7 +136,7 @@ function VendingMachine(vm) {
 		})
 	};
 
-	this.Update = function (array, div)
+	this.Update = function (array, div, needClick)
 	{
 		var that = this;
 		$.each(array,
@@ -138,23 +147,32 @@ function VendingMachine(vm) {
 					return $(this).text() == index;
 				}).parent().parent().find("span.count");
 				elem.html(this);
-				if (this <= 0)
+				if (needClick)
 				{
-// попытка убрать выделение цветом с "пустых" отделов кошелька 
-					$(elem).parent().removeClass("nominalEntry");
-					$(elem).parent().off("click");
+					if (elem.html() <= 0)
+					{
+						var nominalentry = $(elem).parent().find("span.nominalEntry");
+						nominalentry.removeClass("nominalEntry");
+						nominalentry.off("click");
+					}
+					else
+					{
+						var nominalentry = $(elem).parent().find("span")[0];
+						$(nominalentry).addClass("nominalEntry");
+						that.AddOnClickUserPurse();
+					}
 				}
 			});
 	};
 
 	this.UpdateMachineCoins = function (machineCoins) {
 		this.MachineCoins = machineCoins;
-		this.Update(this.MachineCoins, this.MachinePurseDiv);
+		this.Update(this.MachineCoins, this.MachinePurseDiv, false);
 	};
 
 	this.UpdateUsercoins = function (userCoins) {
 		this.UserCoins = userCoins;
-		this.Update(this.UserCoins, this.UserPurseDiv);
+		this.Update(this.UserCoins, this.UserPurseDiv, true);
 	};
 
 	this.CreateBeverages = function ()
@@ -172,7 +190,7 @@ function VendingMachine(vm) {
 		var textForAppend = "";
 		$.each(this.MachineCoins,
 			function (index) {
-				textForAppend+= that.DisplayMoney(this, index);
+				textForAppend+= that.DisplayMoney(this, index, false);
 			});
 			$(textForAppend).appendTo(that.MachinePurseDiv);
 	};
@@ -182,13 +200,16 @@ function VendingMachine(vm) {
 		var textForAppend = "";
 		$.each(this.UserCoins,
 			function (index) {
-				textForAppend+=that.DisplayMoney(this, index);
+				textForAppend+=that.DisplayMoney(this, index,true);
 			});
 		$(textForAppend).appendTo(that.UserPurseDiv);
 	};
 
-	this.DisplayMoney = function (element, index) {
-		return "<div><span class='nominalEntry'><span class='nominal'>" + index + "</span> руб</span> = <span class='count'>" + element + "</span> штук</div>";
+	this.DisplayMoney = function (element, index, needAnalyzeCount)
+	{
+		var spanPart = "";
+		if (needAnalyzeCount && element > 0) { spanPart = ' class="nominalEntry"'; }
+		return "<div><span"+spanPart+"><span class='nominal'>" + index + "</span> руб</span> = <span class='count'>" + element + "</span> штук</div>";
 	};
 
 }
