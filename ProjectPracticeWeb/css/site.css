@@ -30,3 +30,6 @@ padding-left: 50px;
 #InsertedCoins button {
 	margin-left:15px;
 }
+#InsertedCoins button.hide {
+	display:none;
+}

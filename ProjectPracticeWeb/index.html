@@ -1,27 +1,28 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Vending machine</title>
+	<title>Vending machine</title>
 	<meta charset="utf-8" />
 	<script language="javascript" src="/Scripts/jquery-3.1.1.js"></script>
 	<script language="javascript" src="/js/vmscipts.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/site.css" />
 </head>
 <body>
-<div class="vendingMachine">
-	<div id="Beverages" class="left">Ассортимент:</div>
-	<div id="UserPurse" class="left">Кошелек пользователя:</div>
-	<div id="MachinePurse" class="left">Счет автомата:</div>
-	<div class="clear"></div>
-	<div id="InsertedCoins">Внесенная сумма:<span></span><button id="returnMoney">Вернуть деньги</button></div>
-	<div id="errorDiv" class="error"></div>
-</div>
+	<div class="vendingMachine">
+		<div id="Beverages" class="left">Ассортимент:</div>
+		<div id="UserPurse" class="left">Кошелек пользователя:</div>
+		<div id="MachinePurse" class="left">Счет автомата:</div>
+		<div class="clear"></div>
+		<div id="InsertedCoins">
+			Внесенная сумма:
+			<span></span>
+			<button id="returnMoney">Вернуть деньги</button>
+		</div>
+		<div id="errorDiv" class="error"></div>
+	</div>
 	<ul>
-		<li>добавить описание ошибок,</li>
-		<li>показывать кнопку вернуть только если есть деньги</li>
+		<li>добавить описание ошибок, напр не хватает на напиток</li>
 		<li>uni-tests</li>
-		<li>хреново вернул 160 рублей</li>
-		<li>навешивать клик снова, если деньги появились</li>
 	</ul>
 </body>
 </html>

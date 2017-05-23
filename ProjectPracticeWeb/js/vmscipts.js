@@ -19,13 +19,15 @@ function VendingMachine(vm) {
 	this.MachinePurseDiv = $("#MachinePurse");
 	this.InsertedCoinsSpan = $("#InsertedCoins span");
 	this.ErrorDiv = $(".vendingMachine .error");
+	this.ReturnButton = $("#InsertedCoins button");
 
 	var that = this;
 	this.Render = function() {
 		this.CreateBeverages(this.Beverages);
 		this.CreateMachineCoins(this.MachineCoins);
 		this.CreateUsercoins(this.UserCoins);
-		this.InsertedCoinsSpan.text(this.InsertedSum);
+		this.UpdateInsertedSum(this.InsertedSum);
+		this.ShowHideReturnButton(this.InsertedSum);
 		
 		this.BeveragesDiv.find("div.checkBeverage").on("click", function ()
 		{
@@ -54,6 +56,8 @@ function VendingMachine(vm) {
 				that.UpdateUsercoins(data.UserCoins);
 				that.UpdateInsertedSum(data.InsertedSum);
 				that.UpdateBevereges(data.Beverages);
+
+				that.ShowHideReturnButton(data.InsertedSum);
 				return true;
 			}).always(function ()
 			{
@@ -75,14 +79,24 @@ function VendingMachine(vm) {
 				that.UpdateMachineCoins(data.MachineCoins);
 				that.UpdateUsercoins(data.UserCoins);
 				that.UpdateInsertedSum(data.InsertedSum);
+				that.AddOnClickUserPurse();
+				that.ShowHideReturnButton(data.InsertedSum);
+
 			});
 		});
+	}
+
+	this.ShowHideReturnButton = function(sum)
+	{
+		console.log(sum);
+		if (sum <= 0) { this.ReturnButton.addClass("hide"); }
+		else { this.ReturnButton.removeClass(); }
 	}
 
 	this.AddOnClickUserPurse = function ()
 	{
 		var that = this;
-
+		this.UserPurseDiv.find("div span.nominalEntry").off("click");
 		// клик вынести в отдельную процедуру
 		this.UserPurseDiv.find("div span.nominalEntry").on("click", function ()
 		{
@@ -108,6 +122,8 @@ function VendingMachine(vm) {
 				that.UpdateMachineCoins(data.MachineCoins);
 				that.UpdateUsercoins(data.UserCoins);
 				that.UpdateInsertedSum(data.InsertedSum, that);
+				that.ShowHideReturnButton(data.InsertedSum);
+
 				return true;
 			});
 			return true;
@@ -159,7 +175,7 @@ function VendingMachine(vm) {
 					{
 						var nominalentry = $(elem).parent().find("span")[0];
 						$(nominalentry).addClass("nominalEntry");
-						that.AddOnClickUserPurse();
+						//that.AddOnClickUserPurse();
 					}
 				}
 			});
