@@ -36,7 +36,11 @@ function VendingMachine(vm) {
 
 			var cost = $(this).find("span.cost").text();
 
-			if (isNaN(cost) || that.InsertedSum < cost) { return false; }
+			if (isNaN(cost) || that.InsertedSum < cost)
+			{
+				that.ShowHideErrorDiv("Не хватает на выбранный напиток. Пожалуйста, внесите недостающую сумму.");
+				return false;
+			}
 
 			var count = parseInt($(this).find("span.count").text());
 
@@ -58,6 +62,7 @@ function VendingMachine(vm) {
 				that.UpdateBevereges(data.Beverages);
 
 				that.ShowHideReturnButton(data.InsertedSum);
+				that.ShowHideErrorDiv();
 				return true;
 			}).always(function ()
 			{
@@ -86,9 +91,21 @@ function VendingMachine(vm) {
 		});
 	}
 
+	this.ShowHideErrorDiv = function (text)
+	{
+		if (text == null || text == "")
+		{
+			this.ErrorDiv.addClass("hide");
+		}
+		else
+		{
+			this.ErrorDiv.text(text);
+			this.ErrorDiv.removeClass("hide");
+		}
+	}
+
 	this.ShowHideReturnButton = function(sum)
 	{
-		console.log(sum);
 		if (sum <= 0) { this.ReturnButton.addClass("hide"); }
 		else { this.ReturnButton.removeClass(); }
 	}
@@ -134,6 +151,10 @@ function VendingMachine(vm) {
 	{
 		this.InsertedCoinsSpan.text(sum);
 		this.InsertedSum = sum;
+		if (!isNaN(sum) && sum > 0)
+		{
+			this.ShowHideErrorDiv();
+		}
 	};
 
 	this.UpdateBevereges = function (beverages)

@@ -8,9 +8,9 @@ namespace ProjectPracticeWeb.Controllers
 {
     public class HomeController : ApiController
     {
-		public static VendingMachine VMachine { get; }
+		public IVendingMachine VMachine { get; }
 
-	    static HomeController()
+	    private HomeController()
 	    {
 		    var tmp = CommonMethods.DeserializeJson<List<Beverage>>("BeverageJson");
 			var beverages = tmp.Any() ? tmp.ToDictionary(val => val.Name, val=> val) : null;
@@ -18,6 +18,11 @@ namespace ProjectPracticeWeb.Controllers
 				CommonMethods.DeserializeJson<SortedDictionary<int, int>>("UserPurseJson"),
 				CommonMethods.DeserializeJson<SortedDictionary<int, int>>("VMPurseJson"));
 	    }
+
+		public HomeController(IVendingMachine vm)
+		{
+			VMachine = vm;
+		}
 		
 		public IHttpActionResult Get()
 	    {

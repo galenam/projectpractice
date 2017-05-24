@@ -1,0 +1,6 @@
+I:\Dev\ProjectPracticeWeb\UnitTestProject\bin\Debug\UnitTestProject.dll
+I:\Dev\ProjectPracticeWeb\UnitTestProject\bin\Debug\UnitTestProject.pdb
+I:\Dev\ProjectPracticeWeb\UnitTestProject\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+I:\Dev\ProjectPracticeWeb\UnitTestProject\obj\Debug\UnitTestProject.csprojResolveAssemblyReference.cache
+I:\Dev\ProjectPracticeWeb\UnitTestProject\obj\Debug\UnitTestProject.dll
+I:\Dev\ProjectPracticeWeb\UnitTestProject\obj\Debug\UnitTestProject.pdb

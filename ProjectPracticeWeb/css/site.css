@@ -26,10 +26,11 @@ padding-left: 50px;
 }
 .vendingMachine .error {
 	color: red;
+	padding-top:10px;
 }
 #InsertedCoins button {
 	margin-left:15px;
 }
-#InsertedCoins button.hide {
+.hide {
 	display:none;
 }
