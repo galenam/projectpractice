@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProjectPracticeWeb.Controllers;
 using ProjectPracticeWeb.AppCode;
 using ProjectPracticeWeb.Models;
+using System.Web.Http;
+using System.Web.Http.Results;
 
 namespace UnitTestProject
 {
@@ -14,7 +16,8 @@ namespace UnitTestProject
 		{
 			var controller = new HomeController(GetVM());
 			var result = controller.Get();
-
+			Assert.IsInstanceOfType(result, typeof(OkNegotiatedContentResult<IVendingMachine>));
+			// преобразовать тип в результ, посмотреть, что правильно распарсился
 		}
 
 		private IVendingMachine GetVM()

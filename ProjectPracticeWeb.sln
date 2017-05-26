@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectPracticeWeb", "ProjectPracticeWeb\ProjectPracticeWeb.csproj", "{BD748A8A-29D8-487B-B47A-2D67779807C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{3D7AB237-F7B5-4F34-BFF1-62D474DE9F4E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BD748A8A-29D8-487B-B47A-2D67779807C5} = {BD748A8A-29D8-487B-B47A-2D67779807C5}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
