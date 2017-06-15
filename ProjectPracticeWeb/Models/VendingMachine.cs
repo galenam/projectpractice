@@ -83,5 +83,37 @@ namespace ProjectPracticeWeb.Models
 	    {
 		    return InsertedSum>0;
 	    }
-    }
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || obj.GetType() != typeof(VendingMachine))
+			{
+				return false;
+			}
+
+			var vm = (VendingMachine)obj;
+			if ((Beverages == null || !Beverages.Any()) && (vm.Beverages != null))
+			{
+				return false;
+			}
+		}
+
+
+		private bool CompareWithNullAndAny<T>(IEnumerable<T> firstSequence, IEnumerable<T> secondSequence)
+		{
+			if (firstSequence == null && secondSequence == null)
+			{
+				return true;
+			}
+			if (firstSequence == null && secondSequence != null)
+			{
+				return false;
+			}
+			if (firstSequence != null && secondSequence == null)
+			{
+				return false;
+			}
+			// compare with any
+		}
+	}
 }

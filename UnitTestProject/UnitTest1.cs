@@ -17,6 +17,8 @@ namespace UnitTestProject
 			var controller = new HomeController(GetVM());
 			var result = controller.Get();
 			Assert.IsInstanceOfType(result, typeof(OkNegotiatedContentResult<IVendingMachine>));
+			var vm = ((OkNegotiatedContentResult<IVendingMachine>)result).Content;
+			
 			// преобразовать тип в результ, посмотреть, что правильно распарсился
 		}
 
