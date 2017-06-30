@@ -92,9 +92,16 @@ namespace ProjectPracticeWeb.Models
 			}
 
 			var vm = (VendingMachine)obj;
-			if ((Beverages == null || !Beverages.Any()) && (vm.Beverages != null))
+			if (!CompareWithNullAndAny(Beverages, vm.Beverages)
 			{
 				return false;
+			}
+			if (Beverages != null && vm.Beverages != null)
+			{
+				for (var i=0; i++<vm.Beverages.Count;)
+				{
+					
+				}
 			}
 		}
 
@@ -113,7 +120,11 @@ namespace ProjectPracticeWeb.Models
 			{
 				return false;
 			}
-			// compare with any
+			if (firstSequence.Count()!=secondSequence.Count())
+			{
+				return false;
+			}
+			return true;
 		}
 	}
 }
