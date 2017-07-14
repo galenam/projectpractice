@@ -92,15 +92,16 @@ namespace ProjectPracticeWeb.Models
 			}
 
 			var vm = (VendingMachine)obj;
-			if (!CompareWithNullAndAny(Beverages, vm.Beverages)
+			if (!CompareWithNullAndAny(Beverages, vm.Beverages))
 			{
 				return false;
 			}
 			if (Beverages != null && vm.Beverages != null)
 			{
-				for (var i=0; i++<vm.Beverages.Count;)
+				foreach (var beveragePair in Beverages)
 				{
-					
+					var equalBeverage = vm.Beverages.FirstOrDefault(bPair => bPair.Value == beveragePair.Value);
+					if (equalBeverage == null) { return false; }
 				}
 			}
 		}
