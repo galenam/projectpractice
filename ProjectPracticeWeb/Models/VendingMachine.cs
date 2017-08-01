@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ProjectPracticeWeb.AppCode;
+using System;
+using System.Text;
 
 namespace ProjectPracticeWeb.Models
 {
@@ -92,18 +94,35 @@ namespace ProjectPracticeWeb.Models
 			}
 
 			var vm = (VendingMachine)obj;
-			if (!CompareWithNullAndAny(Beverages, vm.Beverages))
+			if (!CompareSequenceAndCycle(Beverages, vm.Beverages, (el1, el2) => el1.Value == el2.Value))
 			{
 				return false;
 			}
-			if (Beverages != null && vm.Beverages != null)
+			if (!CompareSequenceAndCycle(MachineCoins, vm.MachineCoins, (el1, el2) => el1.Value == el2.Value))
 			{
-				foreach (var beveragePair in Beverages)
-				{
-					var equalBeverage = vm.Beverages.FirstOrDefault(bPair => bPair.Value == beveragePair.Value);
-					if (equalBeverage == null) { return false; }
-				}
+				return false;
 			}
+			if (!CompareSequenceAndCycle(UserCoins, vm.UserCoins, (el1, el2) => el1.Value == el2.Value))
+			{
+				return false;
+			}
+			if (InsertedSum != vm.InsertedSum) { return false; }
+			if (State != vm.State) { return false; }
+			return true;
+		}
+
+		private bool CompareSequenceAndCycle<T>(IEnumerable<T> first, IEnumerable<T> second, Func<T,T, bool> func)
+		{
+			if (!CompareWithNullAndAny(first, second))
+			{
+				return false;
+			}
+			foreach (var elementInFirst in first)
+			{
+				var equalElement = second.FirstOrDefault(elementInSecond => func(elementInFirst,elementInSecond ));
+				if (equalElement.Equals(default(T))) { return false; }
+			}
+			return true;
 		}
 
 
@@ -126,6 +145,16 @@ namespace ProjectPracticeWeb.Models
 				return false;
 			}
 			return true;
+		}
+
+		public override int GetHashCode()
+		{
+
+			var sBuilder = new StringBuilder();
+			var stringPresentation = Beverages != null ? Beverages.Aggregate(new StringBuilder(), (sb, bev2) => sb.Append(bev2.ToString())) : null;
+			 
+			var hashString = CommonMethods.GetHashString(stringPresentation);
+			return int.Parse(hashString);
 		}
 	}
 }
