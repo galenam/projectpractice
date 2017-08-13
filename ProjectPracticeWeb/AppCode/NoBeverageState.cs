@@ -1,11 +1,12 @@
-﻿using System;
-using ProjectPracticeWeb.Models;
+﻿using ProjectPracticeWeb.Models;
 
 namespace ProjectPracticeWeb.AppCode
 {
     public class NoBeverageState:IState
     {
-	    public bool InsertCoin(int nominal, IVendingMachine vm)
+		public StateName NameOfState { get; } = StateName.NoBeverage;
+
+		public bool InsertCoin(int nominal, IVendingMachine vm)
 	    {
 		    return ReturnCoins(vm);
 	    }
@@ -26,5 +27,10 @@ namespace ProjectPracticeWeb.AppCode
 	    {
 		    return false;
 	    }
-    }
+
+		public override bool Equals(object obj)
+		{
+			return CommonMethods.EqualsState(obj, this);
+		}
+	}
 }

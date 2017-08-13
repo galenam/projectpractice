@@ -19,6 +19,11 @@ namespace ProjectPracticeWeb.Models
 			return coin.Count == Count && coin.Nominal == Nominal;
 		}
 
+		public override string ToString()
+		{
+			return $"{Nominal}{Count}";
+		}
+
 		public override int GetHashCode()
 		{
 			var stringPresentation = (Nominal + Count).ToString();

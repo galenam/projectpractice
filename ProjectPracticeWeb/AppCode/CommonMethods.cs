@@ -44,5 +44,17 @@ namespace ProjectPracticeWeb.AppCode
 
 			return sb.ToString();
 		}
+
+		public static bool EqualsState(object objectToCompare, IState thisObject)
+		{
+			if (objectToCompare == null || objectToCompare.GetType() != thisObject.GetType())
+			{
+				return false;
+			}
+
+			var state = (IState)objectToCompare;
+
+			return state.NameOfState == thisObject.NameOfState;
+		}
 	}
 }

@@ -1,6 +1,4 @@
 ﻿using ProjectPracticeWeb.AppCode;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace ProjectPracticeWeb.Models
 {
@@ -20,6 +18,11 @@ namespace ProjectPracticeWeb.Models
 			var bev = (Beverage)obj;
 
 			return bev.Cost == Cost && bev.Count == Count && bev.Name == Name;
+		}
+
+		public override string ToString()
+		{
+			return $"{Name}{Cost}{Count}";
 		}
 
 		public override int GetHashCode()

@@ -4,6 +4,9 @@ namespace ProjectPracticeWeb.AppCode
 {
 	public class InsertedUserCoinsState : IState
 	{
+		public StateName NameOfState { get; } = StateName.InsertedUserCoins;
+
+
 		public bool Dispense(IVendingMachine vm, Beverage bev)
 		{
 			return false;
@@ -27,6 +30,11 @@ namespace ProjectPracticeWeb.AppCode
 			
 			vm.State = new SoldBeverageState();
 			return true;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return CommonMethods.EqualsState(obj, this);
 		}
 	}
 }

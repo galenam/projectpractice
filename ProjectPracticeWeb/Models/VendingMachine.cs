@@ -94,20 +94,20 @@ namespace ProjectPracticeWeb.Models
 			}
 
 			var vm = (VendingMachine)obj;
-			if (!CompareSequenceAndCycle(Beverages, vm.Beverages, (el1, el2) => el1.Value == el2.Value))
+			if (!CompareSequenceAndCycle(Beverages, vm.Beverages, (el1, el2) => el1.Value.Equals(el2.Value)))
 			{
 				return false;
 			}
-			if (!CompareSequenceAndCycle(MachineCoins, vm.MachineCoins, (el1, el2) => el1.Value == el2.Value))
+			if (!CompareSequenceAndCycle(MachineCoins, vm.MachineCoins, (el1, el2) => el1.Value.Equals(el2.Value)))
 			{
 				return false;
 			}
-			if (!CompareSequenceAndCycle(UserCoins, vm.UserCoins, (el1, el2) => el1.Value == el2.Value))
+			if (!CompareSequenceAndCycle(UserCoins, vm.UserCoins, (el1, el2) => el1.Value.Equals(el2.Value)))
 			{
 				return false;
 			}
 			if (InsertedSum != vm.InsertedSum) { return false; }
-			if (State != vm.State) { return false; }
+			if (!State.Equals( vm.State)) { return false; }
 			return true;
 		}
 
@@ -151,9 +151,12 @@ namespace ProjectPracticeWeb.Models
 		{
 
 			var sBuilder = new StringBuilder();
-			var stringPresentation = Beverages != null ? Beverages.Aggregate(new StringBuilder(), (sb, bev2) => sb.Append(bev2.ToString())) : null;
-			 
-			var hashString = CommonMethods.GetHashString(stringPresentation);
+			var stringPresentationBeverages = Beverages != null ? Beverages.Aggregate(new StringBuilder(), (sb, bev2) => sb.Append(bev2.ToString())) : null;
+			var stringPresentationMachineCoins = MachineCoins != null ? MachineCoins.Aggregate(new StringBuilder(), (sb, mCoin) => sb.Append(mCoin.ToString())) : null;
+			var stringPresentationUserCoins = UserCoins != null ? UserCoins.Aggregate(new StringBuilder(), (sb, uCoin) => sb.Append(uCoin.ToString())) : null;
+
+			var hashString = CommonMethods.GetHashString(stringPresentationBeverages?.ToString()+stringPresentationMachineCoins?.ToString()
+				+stringPresentationUserCoins?.ToString());
 			return int.Parse(hashString);
 		}
 	}

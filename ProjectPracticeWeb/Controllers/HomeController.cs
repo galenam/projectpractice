@@ -31,8 +31,6 @@ namespace ProjectPracticeWeb.Controllers
 		
 		public IHttpActionResult Put(int nominal)
 	    {
-		// uncomment FromUrl
-		    //var nominal = 0;
 		    var res = VMachine.InsertCoin(nominal);
 		    return Ok(new
 			{

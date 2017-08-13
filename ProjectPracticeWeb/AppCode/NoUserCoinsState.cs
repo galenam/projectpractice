@@ -1,12 +1,14 @@
-﻿using ProjectPracticeWeb.Models;
+﻿using System;
+using ProjectPracticeWeb.Models;
 
 namespace ProjectPracticeWeb.AppCode
 {
     public class NoUserCoinsState:IState
     {
-	    public bool InsertCoin(int nominal, IVendingMachine vm)
+		public StateName NameOfState { get; } = StateName.NoUserCoins;
+
+		public bool InsertCoin(int nominal, IVendingMachine vm)
 	    {
-			//return vm.InsertCoin(nominal);
 			vm.State = new InsertedUserCoinsState();
 			return true;
 		}
@@ -24,6 +26,11 @@ namespace ProjectPracticeWeb.AppCode
 		public bool Dispense(IVendingMachine vm, Beverage bev)
 	    {
 			return false;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return CommonMethods.EqualsState(obj, this);
 		}
 	}
 }

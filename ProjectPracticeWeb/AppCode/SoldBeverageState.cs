@@ -1,10 +1,11 @@
-﻿using System;
-using ProjectPracticeWeb.Models;
+﻿using ProjectPracticeWeb.Models;
 
 namespace ProjectPracticeWeb.AppCode
 {
 	public class SoldBeverageState : IState
 	{
+		public StateName NameOfState { get; } = StateName.SoldBeverage;
+
 		public bool Dispense(IVendingMachine vm, Beverage bev)
 		{
 			if (!vm.ReleaseBeverage(bev)) return false;
@@ -37,6 +38,11 @@ namespace ProjectPracticeWeb.AppCode
 		public bool TurnCrank(IVendingMachine vm, Beverage bev)
 		{
 			return false;
+		}
+
+		public override bool Equals(object obj)
+		{
+			return CommonMethods.EqualsState(obj, this);
 		}
 	}
 }

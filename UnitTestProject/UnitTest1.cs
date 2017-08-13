@@ -12,14 +12,16 @@ namespace UnitTestProject
 	public class UnitTest1
 	{
 		[TestMethod]
-		public void TestMethod1()
+		public void TestMethodGet()
 		{
-			var controller = new HomeController(GetVM());
+			var initialVM = GetVM();
+			var controller = new HomeController(initialVM);
 			var result = controller.Get();
 			Assert.IsInstanceOfType(result, typeof(OkNegotiatedContentResult<IVendingMachine>));
 			var vm = ((OkNegotiatedContentResult<IVendingMachine>)result).Content;
+
 			
-			// преобразовать тип в результ, посмотреть, что правильно распарсился
+			Assert.AreEqual(vm, GetVM());
 		}
 
 		private IVendingMachine GetVM()
