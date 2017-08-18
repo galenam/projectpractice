@@ -58,9 +58,12 @@ namespace ProjectPracticeWeb.Models
 	    {
 			var bev = Beverages.ContainsKey(bevName) ? Beverages[bevName] : null;
 			if (bev == null) { return false; }
-		    State.TurnCrank(this, bev);
-		    State.Dispense(this, bev);
-			return true;
+		    if (!State.TurnCrank(this, bev))
+		    {
+			    return false;
+			}
+
+		    return State.Dispense(this, bev);
 		}
 
 

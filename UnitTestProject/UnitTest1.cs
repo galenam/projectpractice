@@ -28,6 +28,7 @@ namespace UnitTestProject
 		// todo : разобраться с инициализацией значений (напр. initialVM) общим методом
 		// todo : что будет, если я внесу номинал, которого нет в кошельке, например, 11 рублей одним вызовом ?
 		// todo : что вернет метод Delete, если пытаться вернуть деньги из автомата  до внесения ?
+		// todo : что будет, если я попытаюсь перевести машине деньги, которых нет у клиента ? напр. 11-ю рублевую монету, при условии, что у него их только 10
 		[TestMethod]
 		public void TestMethodPut()
 		{
@@ -49,23 +50,28 @@ namespace UnitTestProject
 			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins , machineCoins){InsertedSum = insertedSum, State = new InsertedUserCoinsState()};
 
 			var testVendingMachine = GetVM();
+			testVendingMachine.State = new InsertedUserCoinsState();
 			testVendingMachine.InsertedSum += nominal;
 			if (testVendingMachine.UserCoins.ContainsKey(nominal))
 			{
-				testVendingMachine.UserCoins[nominal]++;
+				testVendingMachine.UserCoins[nominal]--;
+			}
+			if (testVendingMachine.MachineCoins.ContainsKey(nominal))
+			{
+				testVendingMachine.MachineCoins[nominal]++;
 			}
 
-			Assert.AreEqual(vendingMachineWithCoins, initialVm);
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
-
+		
 		[TestMethod]
 		public void TestMethodDelete()
 		{
 			var initialVm = GetVM();
 
-			// клиент накидал 56 р 1-рублевыми монетами
+			// клиент накидал 10 р 1-рублевыми монетами
 			var controller = new HomeController(initialVm);
-			for (var i = 0; i++ < 56;)
+			for (var i = 0; i++ < 10;)
 			{
 				controller.Put(1);
 			}
@@ -85,16 +91,71 @@ namespace UnitTestProject
 
 			// автомат должен вернуть максимально крупными
 			var testVendingMachine = GetVM();
-			testVendingMachine.UserCoins[5]-=11;
-			testVendingMachine.UserCoins[1]-- ;
+			testVendingMachine.UserCoins[1] = 0 ;
+			testVendingMachine.UserCoins[5] += 2;
+			testVendingMachine.MachineCoins[1] += 10;
+			testVendingMachine.MachineCoins[5]-=2;
 
-			Assert.AreEqual(vendingMachineWithCoins, initialVm);
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
+		}
+		
+		[TestMethod]
+		public void TestMethodPostSuccess()
+		{
+			var initialVm = GetVM();
+			
+			var controller = new HomeController(initialVm);
+			controller.Put(1);
+			
+			var result = controller.Post("Tea");
+
+			var putAnonimusResult = new PrivateObject(result);
+			var content = new PrivateObject(putAnonimusResult.GetFieldOrProperty("Content"));
+			var success = (bool)content.GetProperty("Success");
+			Assert.AreEqual(success, true, "Operation Post failed");
+
+			var insertedSum = (int)content.GetProperty("InsertedSum");
+			var beverages = (System.Collections.Generic.Dictionary<string, Beverage>)content.GetProperty("Beverages");
+
+			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum, State = new SoldBeverageState() };
+			
+			var testVendingMachine = GetVM();
+			testVendingMachine.Beverages["Tea"].Count--;
+			testVendingMachine.MachineCoins[1]++;
+			testVendingMachine.UserCoins[1]--;
+			testVendingMachine.State = new SoldBeverageState();
+
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
 
 		[TestMethod]
-		public void TestMethodPost()
+		public void TestMethodPostUnsuccess()
 		{
+			var initialVm = GetVM();
+			var nominal = 1;
 
+			var controller = new HomeController(initialVm);
+			controller.Put(nominal);
+
+			var result = controller.Post("Coffee");
+
+			var putAnonimusResult = new PrivateObject(result);
+			var content = new PrivateObject(putAnonimusResult.GetFieldOrProperty("Content"));
+			var success = (bool)content.GetProperty("Success");
+			Assert.AreEqual(success, false, "Operation Post failed");
+
+			var insertedSum = (int)content.GetProperty("InsertedSum");
+			var beverages = (System.Collections.Generic.Dictionary<string, Beverage>)content.GetProperty("Beverages");
+
+			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum, State = new InsertedUserCoinsState() };
+
+			var testVendingMachine = GetVM();
+			testVendingMachine.State = new InsertedUserCoinsState();
+			testVendingMachine.InsertedSum += nominal;
+			testVendingMachine.MachineCoins[1]++;
+			testVendingMachine.UserCoins[1]--;
+
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
 
 		private IVendingMachine GetVM()
