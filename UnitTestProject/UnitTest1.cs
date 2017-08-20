@@ -24,11 +24,7 @@ namespace UnitTestProject
 			var vm = ((OkNegotiatedContentResult<IVendingMachine>)result).Content;
 			Assert.AreEqual(vm, GetVM());
 		}
-
-		// todo : разобраться с инициализацией значений (напр. initialVM) общим методом
-		// todo : что будет, если я внесу номинал, которого нет в кошельке, например, 11 рублей одним вызовом ?
-		// todo : что вернет метод Delete, если пытаться вернуть деньги из автомата  до внесения ?
-		// todo : что будет, если я попытаюсь перевести машине деньги, которых нет у клиента ? напр. 11-ю рублевую монету, при условии, что у него их только 10
+		
 		[TestMethod]
 		public void TestMethodPut()
 		{
@@ -47,10 +43,9 @@ namespace UnitTestProject
 			var userCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("UserCoins");
 			var machineCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("MachineCoins");
 
-			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins , machineCoins){InsertedSum = insertedSum, State = new InsertedUserCoinsState()};
+			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins , machineCoins){InsertedSum = insertedSum};
 
 			var testVendingMachine = GetVM();
-			testVendingMachine.State = new InsertedUserCoinsState();
 			testVendingMachine.InsertedSum += nominal;
 			if (testVendingMachine.UserCoins.ContainsKey(nominal))
 			{
@@ -63,7 +58,70 @@ namespace UnitTestProject
 
 			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
-		
+
+		[TestMethod]
+		public void TestMethodPutMoreThatCan()
+		{
+			var initialVm = GetVM();
+			var nominal = 1;
+
+			var controller = new HomeController(initialVm);
+			IHttpActionResult result=null;
+			for (var i = 0; i++ < 12;)
+			{
+				result = controller.Put(nominal);
+			}
+			var putAnonimusResult = new PrivateObject(result);
+			var content = new PrivateObject(putAnonimusResult.GetFieldOrProperty("Content"));
+			var success = (bool)content.GetProperty("Success");
+			Assert.AreEqual(success, false, "Operation insert success, it's not right");
+
+			var insertedSum = (int)content.GetProperty("InsertedSum");
+			var userCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("UserCoins");
+			var machineCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("MachineCoins");
+
+			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins, machineCoins) { InsertedSum = insertedSum };
+
+			var testVendingMachine = GetVM();
+			testVendingMachine.InsertedSum += 10;
+			if (testVendingMachine.UserCoins.ContainsKey(nominal))
+			{
+				testVendingMachine.UserCoins[nominal]=0;
+			}
+			if (testVendingMachine.MachineCoins.ContainsKey(nominal))
+			{
+				testVendingMachine.MachineCoins[nominal]+=10;
+			}
+
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
+		}
+
+
+		[TestMethod]
+		public void TestMethodPutBadQuality()
+		{
+			var initialVm = GetVM();
+			var nominal = 11;
+
+			var controller = new HomeController(initialVm);
+			var result = controller.Put(nominal);
+
+			var putAnonimusResult = new PrivateObject(result);
+			var content = new PrivateObject(putAnonimusResult.GetFieldOrProperty("Content"));
+			var success = (bool)content.GetProperty("Success");
+			Assert.AreEqual(success, false, "Operation insert success, it's not right");
+
+			var insertedSum = (int)content.GetProperty("InsertedSum");
+			var userCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("UserCoins");
+			var machineCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("MachineCoins");
+
+			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins, machineCoins) { InsertedSum = insertedSum };
+
+			var testVendingMachine = GetVM();
+
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
+		}
+
 		[TestMethod]
 		public void TestMethodDelete()
 		{
@@ -87,7 +145,7 @@ namespace UnitTestProject
 			var userCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("UserCoins");
 			var machineCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("MachineCoins");
 
-			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins, machineCoins) { InsertedSum = insertedSum, State = new NoUserCoinsState() };
+			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins, machineCoins) { InsertedSum = insertedSum};
 
 			// автомат должен вернуть максимально крупными
 			var testVendingMachine = GetVM();
@@ -98,7 +156,33 @@ namespace UnitTestProject
 
 			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
-		
+
+		[TestMethod]
+		public void TestMethodDeleteUnsuccessReturnMoneyBeforePut()
+		{
+			var initialVm = GetVM();
+			
+			var controller = new HomeController(initialVm);
+
+			var result = controller.Delete();
+
+			var putAnonimusResult = new PrivateObject(result);
+			var content = new PrivateObject(putAnonimusResult.GetFieldOrProperty("Content"));
+			var success = (bool)content.GetProperty("Success");
+			Assert.AreEqual(success, true, "Operation Delete success, it's not right");
+
+			var insertedSum = (int)content.GetProperty("InsertedSum");
+			var userCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("UserCoins");
+			var machineCoins = (System.Collections.Generic.SortedDictionary<int, int>)content.GetProperty("MachineCoins");
+
+			var vendingMachineWithCoins = new VendingMachine(initialVm.Beverages, userCoins, machineCoins) { InsertedSum = insertedSum };
+
+			// автомат должен вернуть максимально крупными
+			var testVendingMachine = GetVM();
+
+			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
+		}
+
 		[TestMethod]
 		public void TestMethodPostSuccess()
 		{
@@ -117,13 +201,12 @@ namespace UnitTestProject
 			var insertedSum = (int)content.GetProperty("InsertedSum");
 			var beverages = (System.Collections.Generic.Dictionary<string, Beverage>)content.GetProperty("Beverages");
 
-			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum, State = new SoldBeverageState() };
+			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum};
 			
 			var testVendingMachine = GetVM();
 			testVendingMachine.Beverages["Tea"].Count--;
 			testVendingMachine.MachineCoins[1]++;
 			testVendingMachine.UserCoins[1]--;
-			testVendingMachine.State = new SoldBeverageState();
 
 			Assert.AreEqual(vendingMachineWithCoins, testVendingMachine);
 		}
@@ -147,10 +230,9 @@ namespace UnitTestProject
 			var insertedSum = (int)content.GetProperty("InsertedSum");
 			var beverages = (System.Collections.Generic.Dictionary<string, Beverage>)content.GetProperty("Beverages");
 
-			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum, State = new InsertedUserCoinsState() };
+			var vendingMachineWithCoins = new VendingMachine(beverages, initialVm.UserCoins, initialVm.MachineCoins) { InsertedSum = insertedSum};
 
 			var testVendingMachine = GetVM();
-			testVendingMachine.State = new InsertedUserCoinsState();
 			testVendingMachine.InsertedSum += nominal;
 			testVendingMachine.MachineCoins[1]++;
 			testVendingMachine.UserCoins[1]--;

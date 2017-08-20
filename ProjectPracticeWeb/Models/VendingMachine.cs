@@ -110,7 +110,6 @@ namespace ProjectPracticeWeb.Models
 				return false;
 			}
 			if (InsertedSum != vm.InsertedSum) { return false; }
-			if (!State.Equals( vm.State)) { return false; }
 			return true;
 		}
 
